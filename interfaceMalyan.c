@@ -4,6 +4,7 @@
 
 //INCLUSIONS
 #include "main.h"
+#include <string.h>
 #include "piloteSerieUSB.h"
 #include "interfaceMalyan.h"
 
@@ -22,7 +23,7 @@ unsigned char interfaceMalyan_reponse[INTERFACEMALYAN_LONGUEUR_MAXIMALE_DES_REPO
 //Definitions de fonctions privees:
 int interfaceMalyan_ecritUneCommande(char *Commande, unsigned char Longueur)
 {
-int retour;
+  int retour;
   retour = piloteSerieUSB_ecrit(Commande, Longueur);
   if (retour != (int)Longueur)
   {
@@ -64,4 +65,23 @@ int interfaceMalyan_arreteLeVentilateur(void)
 int interfaceMalyan_genereUneErreur(void)
 {
   return interfaceMalyan_ecritUneCommande("x000\n", 5);
+}
+
+int interfaceMalyan_donneLaPosition(void)
+{
+  return interfaceMalyan_ecritUneCommande("M114\n",5);
+}
+
+int interfaceMalyan_vaALaPosition(int x, int y, int z)
+{
+  char buf[20];
+
+  sprintf(buf,"G0 X%.3x Y%.3x Z%.3x\n", x, y, z);
+  
+  return interfaceMalyan_ecritUneCommande(buf, 18);
+}
+
+int interfaceMalyan_retourneALaMaison(void)
+{
+  return interfaceMalyan_ecritUneCommande("G0 X000 Y000 Z000\n",18);
 }
