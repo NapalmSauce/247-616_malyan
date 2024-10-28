@@ -97,17 +97,19 @@ int main(int argc,char** argv)
   
   if(pid > 0) // Parent
   {
+ //   printf("Entrez une commande\n");
     while (toucheLue != 'Q')
     {
-      printf("Entrez une commande\n");
       toucheLue = interfaceTouche_lit();
- //     printf("Caractère lu = '%c'\n", toucheLue);
+//      printf("Caractère lu = '%c'\n", toucheLue);
  
       write(pipeFD[PIPE_WRITE], &toucheLue, 1);
       
+      usleep(100000);  
+      
       read(pipeFD[PIPE_READ], &msg, 1);
       
-      if(!msg) //Fatal
+      if(msg) //Fatal
       {
         break;
       }
@@ -118,8 +120,8 @@ int main(int argc,char** argv)
   {
     while (toucheLue != 'Q')
     {
-      printf("Entrez une commande\n");
-      toucheLue = read(pipeFD[PIPE_READ], &toucheLue, 1);
+ //     printf("Entrez une commande\n");
+      while(read(pipeFD[PIPE_READ], &toucheLue, 1) == 0);
       
       printf("Caractère lu = '%c'\n", toucheLue);
       switch (toucheLue)
@@ -195,6 +197,7 @@ int main(int argc,char** argv)
           }
         }
         write(pipeFD[PIPE_WRITE],"\x00",1);
+        usleep(1000);               
       }
     }
   }
